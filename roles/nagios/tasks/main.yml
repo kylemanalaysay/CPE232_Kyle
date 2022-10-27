@@ -16,12 +16,11 @@
       - libgd-dev
       - build-essential
     state: latest
-    force: true
     update_cache: true
   become: true
 
 - name: download and uncompress
-  shell: cd /tmp;wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.3.tar.gz;tar -zxvf nagios-4.4.3.tar.gz; mv nagios-4.4.3 nagios
+  shell: cd /tmp;wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.3.tar.gz;tar -zxvf nagios-4.4.3.tar.gz;mv nagios-4.4.3 nagios
   become: true
 
 - name: configure and make all
@@ -61,11 +60,14 @@
     state: restarted
   become: true
 
+- name: user
+  command: htpasswd -cb /usr/local/nagios/etc/htpasswd.users admin 12345
+
 - name: install nagios plugin
   shell: cd /tmp;wget https://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz;tar -zxvf nagios-plugins-2.3.3.tar.gz;
   become: true
 
-- name: comple nagions plugin
+- name: compile nagions plugin
   shell: cd /tmp/nagios-plugins-2.3.3;./configure --with-nagios-user=nagios --with-nagios-group=nagios;make;make install;
 
 - name: Start Nagios service
